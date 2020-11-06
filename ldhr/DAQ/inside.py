@@ -17,7 +17,7 @@ arr=[]
 arr = [0 for i in range(2)] 
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(12, GPIO.OUT)
+
 
 def get_in_data():
     
