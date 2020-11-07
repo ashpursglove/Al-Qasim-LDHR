@@ -1,6 +1,8 @@
 
 import RPi.GPIO as GPIO
 import time
+from time import gmtime, strftime
+from datetime import datetime, timedelta
 from DAQ.inside import get_in_data
 from DAQ.outside import get_out_data
 from DAQ.other import get_other_data
@@ -10,7 +12,11 @@ from Modes.manual import manual_mode
 
 GPIO.cleanup() # cleanup all GPIOs and close channels!!!
 log_number = 0
+prog = 0 # tank switch progress tracker
 
+hum_diff = 5 #difference in hum that causes a tank switch
+switch_delay = 10 # tank switch buffer time in minutes
+can_switch = True # are the tanks allowed to perform a switch
 tank_switch = False
 
 temp_setpoint = 24
@@ -20,7 +26,8 @@ data_arr = [0]*6
 run = 1
 
 
-
+set_time= datetime.now() #first occurance
+time_now = datetime.now()
 
 
 # GPIO:
@@ -68,6 +75,24 @@ GPIO.output(6, GPIO.HIGH)
 GPIO.output(13, GPIO.HIGH)
 GPIO.output(19, GPIO.HIGH)
 
+inlet_empty = (GPIO.input(16))
+outlet_empty = (GPIO.input(20))
+stage_empty = (GPIO.input(21))
+
+
+
+
+print("\n"*100)
+print("Finding and warming up sensors")
+print("I'll be about 10 seconds!!")
+print("\n"*7)
+
+
+
+
+
+
+
 
 
 #function to get all T&H data
@@ -91,11 +116,19 @@ def get_sensor_data():
     data_arr[5] = other_arr[1]  #other hum
     #GPIO.cleanup() # cleanup all GPIOs and close channels!!!
     
+
+    time_now = datetime.now()
+    
+    
+    
+    
     print("\n"*100)
-    print("Auto Program Running")
+    print("*******************Auto Program Running*******************")
+    print("")
+    print(time_now)
     print("")
     print("Log Number: %d" %(log_number))
-    print("")
+    print("-----------------------------------------------------------")
     print("Inside Temperature: %.1fC" %(data_arr[0]))
     print("Inside Humidity: %.1f Percent" % (data_arr[1]))
     print("")
@@ -104,9 +137,16 @@ def get_sensor_data():
     print("")
     print("Other Greenhouse Temperature: %.1fC" %(data_arr[4]))
     print("Other Greenhouse Humidity: %.1f Percent" % (data_arr[5]))
+    print("-----------------------------------------------------------")
+    print("Tank Switch Condition Met: %r " %(tank_switch))
     print("")
-    print("Tank Switch: %r " %(tank_switch))
+    print("Passed Switch Time Allowance: %r" % (can_switch))
+    print("")
     print("Cooling On: %r " %(cooling))
+    print("")
+    print("Press Control + C to Exit Program")
+    print("")
+    print("*******************Auto Program Running*******************")
     print("")
     
     return data_arr
@@ -116,26 +156,35 @@ def get_sensor_data():
 
 #main program
 
-while True:      
+while True:
+    if datetime.now() >= set_time:
+        can_switch = True
           
           
           #AUTO MODE....................................................................
           
     while run == 1:
+        if datetime.now() >= set_time:
+            can_switch = True
         
         get_sensor_data()
         
-        auto_return = auto_mode(data_arr[0],temp_setpoint,data_arr[1],data_arr[3])
+        auto_return = auto_mode(data_arr[0],temp_setpoint,data_arr[1],data_arr[3],hum_diff)
         
         tank_switch = auto_return[0]
         cooling = auto_return[1]
+        
+        log_number += 1
+        
+
 
            # see if manual switch has been flipped
         if GPIO.input(26):
             run = 2
         
+        if tank_switch and can_switch:
+            run = 3
         
-        log_number += 1
         
         #...................................................................................
         
@@ -167,8 +216,54 @@ while True:
 
      #...........................................................................................
 
+
+# Tank Switch.............................................................................
             
-            
+
+    while run ==3:
+        time.sleep(0.2)
+        inlet_empty = (GPIO.input(16))
+        outlet_empty = (GPIO.input(20))
+        stage_empty = (GPIO.input(21))
+        print("\n"*100)
+        print("")
+        print("Tank Switch")
+        print("")
+        print("Next Tank Switch allowed in %.1f Minutes" % (switch_delay))
+        print("")
+        print("program Step: %s" % (prog))
+        print("")
+        
+        #print("inlet empty: %r" % (inlet_empty))
+        if prog == 0:
+            GPIO.output(6, GPIO.LOW)
+            print("Moving Inlet Tank to Staging Tank")
+            if inlet_empty == 0:
+                prog = 1
+        
+        if prog ==1:
+            GPIO.output(6, GPIO.HIGH)
+            GPIO.output(13, GPIO.LOW)
+            print("Moving Outlet Tank to Inlet Tank")
+            if outlet_empty == 0:
+                prog = 2
+                
+        if prog == 2:
+            GPIO.output(13, GPIO.HIGH)
+            GPIO.output(19, GPIO.LOW)
+            print("Moving Staging Tank to Outlet Tank")
+            if stage_empty == 0:
+                GPIO.output(19, GPIO.HIGH)
+                print("Tank Switch Complete, Moving Back to Main Program")
+                
+                set_time = datetime.now()+ timedelta(minutes = switch_delay) #sets time limit until next switch
+                can_switch = False
+                prog = 0
+                run = 1
+        
+        print("\n"*7)
+#................................................................
+        
         
 
             

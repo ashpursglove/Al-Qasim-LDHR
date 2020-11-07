@@ -52,10 +52,10 @@ GPIO.setup(21, GPIO.IN)
 # On relay board, relays coils are on when pin is low!
 
 while True:
+    GPIO.setmode(GPIO.BCM)
     
     GPIO.output(5, GPIO.LOW)
     time.sleep(jump_time)
-    GPIO.setmode(GPIO.BCM)
     GPIO.output(5, GPIO.HIGH)
     time.sleep(jump_time)
 

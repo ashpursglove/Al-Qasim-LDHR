@@ -51,7 +51,7 @@ stage_empty = (GPIO.input(21))
     
 
     
-def auto_mode(in_temp,set_point,in_hum,out_hum,):
+def auto_mode(in_temp,set_point,in_hum,out_hum,hum_diff):
     
     tank_switch = False
     cooling = False
@@ -60,8 +60,8 @@ def auto_mode(in_temp,set_point,in_hum,out_hum,):
 
         
         
-      #if the inside is less than 5% different from outside    1 = inside hum, 3 = outside hum
-    if in_hum <= out_hum +5: 
+#     if the inside is less than 5% different from outside    1 = inside hum, 3 = outside hum
+    if in_hum <= out_hum +hum_diff: 
         tank_switch = True
             
       # if temperature is above setpoint turn on cooling
