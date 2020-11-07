@@ -1,6 +1,7 @@
 
 import RPi.GPIO as GPIO
 import time
+import csv
 from time import gmtime, strftime
 from datetime import datetime, timedelta
 from DAQ.inside import get_in_data
@@ -8,18 +9,21 @@ from DAQ.outside import get_out_data
 from DAQ.other import get_other_data
 from Modes.auto import auto_mode
 from Modes.manual import manual_mode
+from Logging.data_logging import datalog
 
-
+cur_filename = str(datetime.now())
+no_tank_changes = 0
 GPIO.cleanup() # cleanup all GPIOs and close channels!!!
 log_number = 0
 prog = 0 # tank switch progress tracker
 
-hum_diff = 5 #difference in hum that causes a tank switch
-switch_delay = 10 # tank switch buffer time in minutes
+
+hum_diff = 10 #difference in hum that causes a tank switch
+switch_delay = 1 # tank switch buffer time in minutes
 can_switch = True # are the tanks allowed to perform a switch
 tank_switch = False
 
-temp_setpoint = 24
+temp_setpoint = 24 # tempetature setpoint for cooling
 cooling = False
 
 data_arr = [0]*6
@@ -88,10 +92,11 @@ print("I'll be about 10 seconds!!")
 print("\n"*7)
 
 
+''' Set up data logging'''
+data_is_logging = False
 
 
-
-
+'''...............................................................................................'''
 
 
 
@@ -99,6 +104,8 @@ print("\n"*7)
 def get_sensor_data():
     #get data from inside sensor
     in_arr = get_in_data()
+    
+    
     
     data_arr[0] = in_arr[0] #inside temp
     data_arr[1] = in_arr[1] #inside hum
@@ -123,20 +130,21 @@ def get_sensor_data():
     
     
     print("\n"*100)
+    print(time_now)
     print("*******************Auto Program Running*******************")
     print("")
-    print(time_now)
-    print("")
-    print("Log Number: %d" %(log_number))
+    print("Number of Tank Changes: %d" %(no_tank_changes))
+    print("Tank Change Threshold: %.1f%%" %(hum_diff))
+    print("Switch Threshold Time:%.1f Minutes" % (switch_delay))
     print("-----------------------------------------------------------")
     print("Inside Temperature: %.1fC" %(data_arr[0]))
-    print("Inside Humidity: %.1f Percent" % (data_arr[1]))
+    print("Inside Humidity: %.1f%%" % (data_arr[1]))
     print("")
     print("Outside Temperature: %.1fC" %(data_arr[2]))
-    print("Outside Humidity: %.1f Percent" % (data_arr[3]))
+    print("Outside Humidity: %.1f%%" % (data_arr[3]))
     print("")
     print("Other Greenhouse Temperature: %.1fC" %(data_arr[4]))
-    print("Other Greenhouse Humidity: %.1f Percent" % (data_arr[5]))
+    print("Other Greenhouse Humidity: %.1f%%" % (data_arr[5]))
     print("-----------------------------------------------------------")
     print("Tank Switch Condition Met: %r " %(tank_switch))
     print("")
@@ -164,6 +172,10 @@ while True:
           #AUTO MODE....................................................................
           
     while run == 1:
+        
+#         data_is_logging = datalog(data_is_logging,data_arr[0],data_arr[1],data_arr[2],data_arr[3],data_arr[4],data_arr[5],99)
+        
+        
         if datetime.now() >= set_time:
             can_switch = True
         
@@ -176,6 +188,8 @@ while True:
         
         log_number += 1
         
+        
+        
 
 
            # see if manual switch has been flipped
@@ -184,6 +198,29 @@ while True:
         
         if tank_switch and can_switch:
             run = 3
+            
+            
+        
+            
+        
+        
+        with open(cur_filename+'.csv','+a',  newline='') as csvfile:
+            spamwriter = csv.writer(csvfile, delimiter=' ',quotechar=' ', quoting=csv.QUOTE_MINIMAL)
+            
+            if data_is_logging == False:
+                spamwriter.writerow(['Time'] + ['In Temp']+ ['In Hum']+['Out Temp']+ ['Out Hum']+ ['Other Temp']+ ['Other Hum']+ ['No Tank Switch']+ ['column 5']+ ['column 6'])
+                data_is_logging = True
+                
+            
+            time.sleep(0.1)
+            
+            spamwriter.writerow([str(datetime.now()),"%.1f" %(data_arr[0]),"%.1f" %(data_arr[1]),"%.1f" %(data_arr[2]),"%.1f" %(data_arr[3]),"%.1f" %(data_arr[4]),"%.1f" %(data_arr[5]),no_tank_changes,'666','ergerg'])
+        
+        
+        
+        
+        
+        
         
         
         #...................................................................................
@@ -226,6 +263,7 @@ while True:
         outlet_empty = (GPIO.input(20))
         stage_empty = (GPIO.input(21))
         print("\n"*100)
+        print("*******************Tank Switch in Progress*******************")
         print("")
         print("Tank Switch")
         print("")
@@ -260,8 +298,10 @@ while True:
                 can_switch = False
                 prog = 0
                 run = 1
-        
-        print("\n"*7)
+                no_tank_changes = no_tank_changes +1
+        print("\n"*2)
+        print("*******************Tank Switch in Progress*******************")
+        print("\n"*4)
 #................................................................
         
         

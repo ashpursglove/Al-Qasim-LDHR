@@ -25,10 +25,10 @@ def get_in_data():
     for i in range(1):
         values[i] = Adafruit_DHT.DHT22
         humidity, temperature_c = Adafruit_DHT.read_retry(DHT_SENSOR1, DHT_PIN1)
-        temperature_f = temperature_c * ( 9 / 5 ) + 32
+        
         
         values[0]=temperature_c
-        values[1]=temperature_f
+        values[1]=0
         values[2]=humidity
             
         insidetemp = values[0]
