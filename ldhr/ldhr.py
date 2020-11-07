@@ -1,19 +1,23 @@
-# from get_data import get_data
+
 import RPi.GPIO as GPIO
 import time
 from DAQ.inside import get_in_data
 from DAQ.outside import get_out_data
 from DAQ.other import get_other_data
+from Modes.auto import auto_mode
+from Modes.manual import manual_mode
 
+
+GPIO.cleanup() # cleanup all GPIOs and close channels!!!
 log_number = 0
 
 tank_switch = False
 
-temp_setpoint = 20
+temp_setpoint = 24
 cooling = False
 
 data_arr = [0]*6
-run = 0
+run = 1
 
 
 
@@ -56,6 +60,14 @@ GPIO.setup(12, GPIO.IN)
 GPIO.setup(16, GPIO.IN)
 GPIO.setup(20, GPIO.IN)
 GPIO.setup(21, GPIO.IN)
+
+
+#set all outputs to off (coil high)
+GPIO.output(5, GPIO.HIGH)
+GPIO.output(6, GPIO.HIGH)
+GPIO.output(13, GPIO.HIGH)
+GPIO.output(19, GPIO.HIGH)
+
 
 
 #function to get all T&H data
@@ -104,110 +116,63 @@ def get_sensor_data():
 
 #main program
 
-if run == 0:
-    r = input("Press r and enter to run program ")
-    if r == "r":
-        print("Press Ctrl + C to halt Program")
-        time.sleep(2)
-        run = 1
-        r = "x"
-      
-      
-      
-      
-      
-while run == 1:
-    
-    get_sensor_data()
-    
-    
-    manual_or = (GPIO.input(26))
-    inlet_empty = (GPIO.input(16))
-    outlet_empty = (GPIO.input(20))
-    stage_empty = (GPIO.input(21))
-    
-    
-    
-    log_number += 1
-    
-    
-    # see if manual switch has been flipped
-    if GPIO.input(26):
-        run = 2
+while True:      
+          
+          
+          #AUTO MODE....................................................................
+          
+    while run == 1:
         
-    
-  #if the inside is less than 5% different from outside    1 = inside hum, 3 = outside hum
-    if data_arr[1] <= data_arr[3]+5:
-        tank_switch = True
+        get_sensor_data()
         
-  # if temperature is above setpoint turn on cooling
-    if data_arr[0] >= temp_setpoint:
-        cooling = True
-        GPIO.output(5, GPIO.LOW)
-    else:
-        cooling = False
-        GPIO.output(5, GPIO.HIGH)
+        auto_return = auto_mode(data_arr[0],temp_setpoint,data_arr[1],data_arr[3])
         
-    
-    
-    
-    
-    
-    
-    
-    
-    #Manual mode
-    
-    
+        tank_switch = auto_return[0]
+        cooling = auto_return[1]
+
+           # see if manual switch has been flipped
+        if GPIO.input(26):
+            run = 2
+        
+        
+        log_number += 1
+        
+        #...................................................................................
+        
+        
+            
+        
+        
+        
+        
+        
+        
+        
+        
+        #Manual mode................................................................
+        
+        
     while run == 2:
         manual_or = (GPIO.input(26))
-        manual_cool = (GPIO.input(23))
-        manual_inletout = (GPIO.input(24))
-        manual_outletout = (GPIO.input(25))
-        manual_stout = (GPIO.input(12))
-        
-        
         
         if manual_or == 0:
-            
             run = 1
         
+        manual_mode()
         
-        
-        if manual_cool:
-            GPIO.output(5, GPIO.LOW)
-        else:
-            GPIO.output(5, GPIO.HIGH)
-            
-            
-        if manual_inletout:
-            GPIO.output(6, GPIO.LOW)
-        else:
-            GPIO.output(6, GPIO.HIGH)
-            
-            
-        if manual_outletout:
-            GPIO.output(13, GPIO.LOW)
-        else:
-            GPIO.output(13, GPIO.HIGH)
-            
-            
-        if manual_stout:
-            GPIO.output(19, GPIO.LOW)
-        else:
-            GPIO.output(19, GPIO.HIGH)
-            
+        print("\n"*100)
         print("manual mode")
 
 
- 
 
-        
-        
-    
+     #...........................................................................................
 
+            
+            
         
-        
+
+            
+            
 
     
 
