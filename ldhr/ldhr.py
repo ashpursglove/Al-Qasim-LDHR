@@ -23,7 +23,7 @@ dli = 0.1 # datalogging interval time in minutes
 
 
 hum_diff = 10 #difference in hum that causes a tank switch
-switch_delay = 10 # tank switch buffer time in minutes
+switch_delay = 15 # tank switch buffer time in minutes
 can_switch = True # are the tanks allowed to perform a switch
 tank_switch = False
 
@@ -133,7 +133,7 @@ def get_sensor_data():
     
     
     
-    print("\n"*100)
+    print("\n"*1000)
     print("%d-%d-%d  %d:%d:%d" % (time_now.day, time_now.month,time_now.year , time_now.hour, time_now.minute, time_now.second))
     print("*******************Auto Program Running*******************")
     print("")
@@ -276,7 +276,7 @@ while True:
         inlet_empty = (GPIO.input(16))
         outlet_empty = (GPIO.input(20))
         stage_empty = (GPIO.input(21))
-        print("\n"*100)
+        print("\n"*1000)
         print("*******************Tank Switch in Progress*******************")
         print("")
         print("Tank Switch")
