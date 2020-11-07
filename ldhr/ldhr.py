@@ -19,7 +19,7 @@ prog = 0 # tank switch progress tracker
 
 dlt = datetime.now() #last datalogging time
 ndl = datetime.now() # next data logging time
-dli = 0.01 # datalogging interval time in minutes
+dli = 0.1 # datalogging interval time in minutes
 
 
 hum_diff = 10 #difference in hum that causes a tank switch
@@ -134,12 +134,13 @@ def get_sensor_data():
     
     
     print("\n"*100)
-    print(time_now)
+    print("%d-%d-%d  %d:%d:%d" % (time_now.day, time_now.month,time_now.year , time_now.hour, time_now.minute, time_now.second))
     print("*******************Auto Program Running*******************")
     print("")
     print("Number of Tank Changes: %d" %(no_tank_changes))
     print("Tank Change Threshold: %.1f%%" %(hum_diff))
     print("Switch Threshold Time:%.1f Minutes" % (switch_delay))
+    print("Time of Next Data Log: %d:%d:%d" % (ndl.hour, ndl.minute, ndl.second))
     print("-----------------------------------------------------------")
     print("Inside Temperature: %.1fC" %(data_arr[0]))
     print("Inside Humidity: %.1f%%" % (data_arr[1]))
@@ -212,6 +213,7 @@ while True:
 
         if datetime.now() >= ndl:
             
+            
         
         
             with open(cur_filename+'.csv','+a',  newline='') as csvfile:
@@ -223,9 +225,9 @@ while True:
                     
                 
                 time.sleep(0.1)
-                
+               
                 spamwriter.writerow([str(datetime.now()),"%.1f" %(data_arr[0]),"%.1f" %(data_arr[1]),"%.1f" %(data_arr[2]),"%.1f" %(data_arr[3]),"%.1f" %(data_arr[4]),"%.1f" %(data_arr[5]),no_tank_changes])
-                
+               
                 ndl = datetime.now()+ timedelta(minutes = dli) #sets time limit until next data log
             
         
