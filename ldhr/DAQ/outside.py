@@ -26,10 +26,23 @@ def get_out_data():
         values[i] = Adafruit_DHT.DHT22
         humidity, temperature_c = Adafruit_DHT.read_retry(DHT_SENSOR2, DHT_PIN2)
 
+        if temperature_c:
+            values[0]=temperature_c
+            
+        else:
+            values[0]=0
+            
+        if humidity:
+            values[2]=humidity
+        else:
+            values[2]=0
         
-        values[0]=temperature_c
+        
+        
+        
+        #values[0]=temperature_c
         values[1]= 0
-        values[2]=humidity
+        #values[2]=humidity
             
         outsidetemp = values[0]
         outsidehum = values[2]

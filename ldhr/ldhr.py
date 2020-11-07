@@ -17,9 +17,13 @@ GPIO.cleanup() # cleanup all GPIOs and close channels!!!
 log_number = 0
 prog = 0 # tank switch progress tracker
 
+dlt = datetime.now() #last datalogging time
+ndl = datetime.now() # next data logging time
+dli = 0.01 # datalogging interval time in minutes
+
 
 hum_diff = 10 #difference in hum that causes a tank switch
-switch_delay = 1 # tank switch buffer time in minutes
+switch_delay = 10 # tank switch buffer time in minutes
 can_switch = True # are the tanks allowed to perform a switch
 tank_switch = False
 
@@ -201,21 +205,29 @@ while True:
             
             
         
+        
+        
+
+
+
+        if datetime.now() >= ndl:
             
         
         
-        with open(cur_filename+'.csv','+a',  newline='') as csvfile:
-            spamwriter = csv.writer(csvfile, delimiter=' ',quotechar=' ', quoting=csv.QUOTE_MINIMAL)
-            
-            if data_is_logging == False:
-                spamwriter.writerow(['Time'] + ['In Temp']+ ['In Hum']+['Out Temp']+ ['Out Hum']+ ['Other Temp']+ ['Other Hum']+ ['No Tank Switch']+ ['column 5']+ ['column 6'])
-                data_is_logging = True
+            with open(cur_filename+'.csv','+a',  newline='') as csvfile:
+                spamwriter = csv.writer(csvfile, delimiter='|',quotechar=' ', quoting=csv.QUOTE_MINIMAL)
                 
+                if data_is_logging == False:
+                    spamwriter.writerow(['Time'] + ['In_Temp']+ ['In_Hum']+['Out_Temp']+ ['Out_Hum']+ ['Other_Temp']+ ['Other_Hum']+ ['No_Tank_Switch'])
+                    data_is_logging = True
+                    
+                
+                time.sleep(0.1)
+                
+                spamwriter.writerow([str(datetime.now()),"%.1f" %(data_arr[0]),"%.1f" %(data_arr[1]),"%.1f" %(data_arr[2]),"%.1f" %(data_arr[3]),"%.1f" %(data_arr[4]),"%.1f" %(data_arr[5]),no_tank_changes])
+                
+                ndl = datetime.now()+ timedelta(minutes = dli) #sets time limit until next data log
             
-            time.sleep(0.1)
-            
-            spamwriter.writerow([str(datetime.now()),"%.1f" %(data_arr[0]),"%.1f" %(data_arr[1]),"%.1f" %(data_arr[2]),"%.1f" %(data_arr[3]),"%.1f" %(data_arr[4]),"%.1f" %(data_arr[5]),no_tank_changes,'666','ergerg'])
-        
         
         
         
