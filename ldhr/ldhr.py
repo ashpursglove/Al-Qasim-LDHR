@@ -133,7 +133,7 @@ def get_sensor_data():
     
     
     
-    print("\n"*1000)
+    print("\n"*50)
     print("%d-%d-%d  %d:%d:%d" % (time_now.day, time_now.month,time_now.year , time_now.hour, time_now.minute, time_now.second))
     print("*******************Auto Program Running*******************")
     print("")
@@ -276,7 +276,7 @@ while True:
         inlet_empty = (GPIO.input(16))
         outlet_empty = (GPIO.input(20))
         stage_empty = (GPIO.input(21))
-        print("\n"*1000)
+        print("\n"*50)
         print("*******************Tank Switch in Progress*******************")
         print("")
         print("Tank Switch")
