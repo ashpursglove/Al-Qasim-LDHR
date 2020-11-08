@@ -1,7 +1,7 @@
 Still to do:
 
 Create setup program for new installs,  
-setup SMTP auto emailn, 
+setup SMTP auto email,  
 CSV fix on | delims,  
 
 
