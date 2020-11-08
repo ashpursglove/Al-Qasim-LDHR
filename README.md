@@ -1,7 +1,7 @@
 https://github.com/ashpursglove/Al-Qasim-LDHR
 
 
-i put this here on github web
+i put this here on github nope this is  a local change
 
 
 Still to do:
