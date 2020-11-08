@@ -2,7 +2,9 @@ Still to do:
 
 Create setup program for new installs,  
 setup SMTP auto email,  
-CSV fix on | delims,  
+CSV fix on | delims,    
+slow scroll on high def displays,     
+
 
 
 PIN OUT
