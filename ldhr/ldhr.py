@@ -19,11 +19,11 @@ prog = 0 # tank switch progress tracker
 
 dlt = datetime.now() #last datalogging time
 ndl = datetime.now() # next data logging time
-dli = 1 # datalogging interval time in minutes
+dli = 0.1 # datalogging interval time in minutes
 
 
 hum_diff = 10 #difference in hum that causes a tank switch
-switch_delay = 60 # tank switch buffer time in minutes
+switch_delay = 1 # tank switch buffer time in minutes
 can_switch = True # are the tanks allowed to perform a switch
 tank_switch = False
 
