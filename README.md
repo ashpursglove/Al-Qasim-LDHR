@@ -1,8 +1,8 @@
 Still to do:
 
-Create setup program for new installs
-setup SMTP auto email
-CSV fix on | delims
+Create setup program for new installs n/
+setup SMTP auto emailn /n
+CSV fix on | delims /n
 
 
 PIN OUT
