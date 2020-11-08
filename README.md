@@ -1,6 +1,8 @@
 https://github.com/ashpursglove/Al-Qasim-LDHR
 
 
+i put this here on github web
+
 
 Still to do:
 
