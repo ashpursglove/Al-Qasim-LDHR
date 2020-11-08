@@ -19,15 +19,15 @@ prog = 0 # tank switch progress tracker
 
 dlt = datetime.now() #last datalogging time
 ndl = datetime.now() # next data logging time
-dli = 0.1 # datalogging interval time in minutes
+dli = 1 # datalogging interval time in minutes
 
 
 hum_diff = 10 #difference in hum that causes a tank switch
-switch_delay = 15 # tank switch buffer time in minutes
+switch_delay = 60 # tank switch buffer time in minutes
 can_switch = True # are the tanks allowed to perform a switch
 tank_switch = False
 
-temp_setpoint = 24 # tempetature setpoint for cooling
+temp_setpoint = 20 # tempetature setpoint for cooling
 cooling = False
 
 data_arr = [0]*6
