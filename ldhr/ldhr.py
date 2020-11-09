@@ -19,11 +19,11 @@ prog = 0 # tank switch progress tracker
 
 dlt = datetime.now() #last datalogging time
 ndl = datetime.now() # next data logging time
-dli = 0.1 # datalogging interval time in minutes
+dli = 1 # datalogging interval time in minutes
 
 
-hum_diff = 10 #difference in hum that causes a tank switch
-switch_delay = 1 # tank switch buffer time in minutes
+hum_diff = 5 #difference in hum that causes a tank switch
+switch_delay = 60 # tank switch buffer time in minutes
 can_switch = True # are the tanks allowed to perform a switch
 tank_switch = False
 
@@ -134,6 +134,7 @@ def get_sensor_data():
     
     
     print("\n"*50)
+    time.sleep(0.01)
     print("%d-%d-%d  %d:%d:%d" % (time_now.day, time_now.month,time_now.year , time_now.hour, time_now.minute, time_now.second))
     print("*******************Auto Program Running*******************")
     print("")
@@ -261,7 +262,16 @@ while True:
         manual_mode()
         
         print("\n"*100)
-        print("manual mode")
+        print("*******************Manual Mode*******************")
+        print("\n"*5)
+        print("             Manual Mode Engaged")
+        print("\n")
+        print("         Use Switches to control Outputs")
+        print("\n"*5)
+        print("*******************Manual Mode*******************")
+        print("\n"*2)
+        time.sleep(0.1)
+        
 
 
 
@@ -276,6 +286,7 @@ while True:
         inlet_empty = (GPIO.input(16))
         outlet_empty = (GPIO.input(20))
         stage_empty = (GPIO.input(21))
+        time.sleep(0.2)
         print("\n"*50)
         print("*******************Tank Switch in Progress*******************")
         print("")
