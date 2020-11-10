@@ -43,15 +43,15 @@ time_now = datetime.now()
 # 17 - Outside greenhouse DHT22
 # 27 - Other greenhouse DHT22
 # 
-# 
-# 5  - Pump 1 inlet cooling, Pump 2 outlet cooling, fans
+# 22 - Pump 1 inlet cooling
+# 5  - Pump 2 outlet cooling
 # 6  - Pump 3 inlet tank out
 # 13 - Pump 4 outlet tank out
 # 19 - Pump 5 staging tank out
 # 
 # 26 - Manual Control Over-Ride
-# 18 - Manual Fan
-# 23 - Manual Cooling pumps (1&2)
+# 18 - Manual inlet cooling pump 1
+# 23 - Manual outlet cooling pump 2
 # 24 - Manual inlet tank out (Pump 3)
 # 25 - Manual Outlet Tank out (Pump 4)
 # 12 - Manual Staging Tank out (Pump 5)
@@ -61,6 +61,7 @@ time_now = datetime.now()
 
 GPIO.setmode(GPIO.BCM)
 
+GPIO.setup(22, GPIO.OUT)
 GPIO.setup(5, GPIO.OUT)
 GPIO.setup(6, GPIO.OUT)
 GPIO.setup(13, GPIO.OUT)
@@ -78,6 +79,7 @@ GPIO.setup(21, GPIO.IN)
 
 
 #set all outputs to off (coil high)
+GPIO.output(22, GPIO.HIGH)
 GPIO.output(5, GPIO.HIGH)
 GPIO.output(6, GPIO.HIGH)
 GPIO.output(13, GPIO.HIGH)
@@ -137,7 +139,7 @@ def get_sensor_data():
     time.sleep(0.01)
     print("%d-%d-%d  %d:%d:%d" % (time_now.day, time_now.month,time_now.year , time_now.hour, time_now.minute, time_now.second))
     print("*******************Auto Program Running*******************")
-    print("")
+   # print("")
     print("Number of Tank Changes: %d" %(no_tank_changes))
     print("Tank Change Threshold: %.1f%%" %(hum_diff))
     print("Switch Threshold Time:%.1f Minutes" % (switch_delay))
@@ -145,21 +147,21 @@ def get_sensor_data():
     print("-----------------------------------------------------------")
     print("Inside Temperature: %.1fC" %(data_arr[0]))
     print("Inside Humidity: %.1f%%" % (data_arr[1]))
-    print("")
+    #print("")
     print("Outside Temperature: %.1fC" %(data_arr[2]))
     print("Outside Humidity: %.1f%%" % (data_arr[3]))
-    print("")
+    #print("")
     print("Other Greenhouse Temperature: %.1fC" %(data_arr[4]))
     print("Other Greenhouse Humidity: %.1f%%" % (data_arr[5]))
     print("-----------------------------------------------------------")
     print("Tank Switch Condition Met: %r " %(tank_switch))
-    print("")
+    #print("")
     print("Passed Switch Time Allowance: %r" % (can_switch))
-    print("")
+   # print("")
     print("Cooling On: %r " %(cooling))
-    print("")
+   # print("")
     print("Press Control + C to Exit Program")
-    print("")
+   # print("")
     print("*******************Auto Program Running*******************")
     print("")
     
@@ -187,7 +189,8 @@ while True:
         
         get_sensor_data()
         
-        auto_return = auto_mode(data_arr[0],temp_setpoint,data_arr[1],data_arr[3],hum_diff)
+        auto_return = auto_mode(data_arr[0],temp_setpoint,data_arr[1],data_arr[3],hum_diff) # runs the auto program here and returns paramaters
+        
         
         tank_switch = auto_return[0]
         cooling = auto_return[1]
@@ -212,7 +215,7 @@ while True:
 
 
 
-        if datetime.now() >= ndl:
+        if datetime.now() >= ndl: #chesks time now against when next data log time is
             
             
         

@@ -9,15 +9,15 @@ GPIO.cleanup() # cleanup all GPIOs and close channels!!!
 # 17 - Outside greenhouse DHT22
 # 27 - Other greenhouse DHT22
 # 
-# 
-# 5  - Pump 1 inlet cooling, Pump 2 outlet cooling, fans
+# 22 - Pump 1 inlet cooling
+# 5  - Pump 2 outlet cooling
 # 6  - Pump 3 inlet tank out
 # 13 - Pump 4 outlet tank out
 # 19 - Pump 5 staging tank out
 # 
 # 26 - Manual Control Over-Ride
-# 18 - Manual Fan
-# 23 - Manual Cooling pumps (1&2)
+# 18 - Manual inlet cooling pump 1
+# 23 - Manual outlet cooling pump 2
 # 24 - Manual inlet tank out (Pump 3)
 # 25 - Manual Outlet Tank out (Pump 4)
 # 12 - Manual Staging Tank out (Pump 5)
@@ -27,6 +27,7 @@ GPIO.cleanup() # cleanup all GPIOs and close channels!!!
 
 GPIO.setmode(GPIO.BCM)
 
+GPIO.setup(22, GPIO.OUT)
 GPIO.setup(5, GPIO.OUT)
 GPIO.setup(6, GPIO.OUT)
 GPIO.setup(13, GPIO.OUT)
@@ -66,9 +67,11 @@ def auto_mode(in_temp,set_point,in_hum,out_hum,hum_diff):
             
       # if temperature is above setpoint turn on cooling
     if in_temp >= set_point:
+        GPIO.output(22, GPIO.LOW)
         GPIO.output(5, GPIO.LOW)
         cooling = True
     else:
+        GPIO.output(22, GPIO.HIGH)
         GPIO.output(5, GPIO.HIGH)
 
     return tank_switch, cooling
