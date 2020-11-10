@@ -25,8 +25,8 @@ GPIO:
 13 - Pump 4 outlet tank out   
 19 - Pump 5 staging tank out    
 26 - Manual Control   
-18 - Manual Fan   
-23 - Manual Cooling pumps and Fan (1&2)   
+18 - Manual pump 1   
+23 - Manual pump 2   
 24 - Manual inlet tank out (Pump 3)   
 25 - Manual Outlet Tank out (Pump 4)    
 12 - Manual Staging Tank out (Pump 5)   
