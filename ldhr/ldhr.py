@@ -9,9 +9,12 @@ from DAQ.outside import get_out_data
 from DAQ.other import get_other_data
 from Modes.auto import auto_mode
 from Modes.manual import manual_mode
+from Logging.auto_log_send import autolog
+from Logging.auto_log_send import autosend
 
 
-cur_filename = "/home/pi/code/ldhr/ldhr/Logging/"+str(datetime.now())
+cur_filename = "nil"
+
 
 
 
@@ -26,7 +29,7 @@ ndl = datetime.now() # next data logging time
 dli = 0.05 # datalogging interval time in minutes
 
 
-hum_diff = 5 #difference in hum that causes a tank switch
+hum_diff = 1 #difference in hum that causes a tank switch
 switch_delay = 60 # tank switch buffer time in minutes
 can_switch = True # are the tanks allowed to perform a switch
 tank_switch = False
@@ -36,6 +39,16 @@ cooling = False
 
 data_arr = [0]*6
 run = 1
+
+
+''' Set up data logging'''
+data_is_logging = False
+
+day_number = 0
+session_length = 30 #time between each data dump in minutes (1 day is 1440 minutes)
+session_start = datetime.now()
+following_session = datetime.now()+ timedelta(minutes = session_length)
+
 
 
 set_time= datetime.now() #first occurance
@@ -102,8 +115,7 @@ print("I'll be about 10 seconds!!")
 print("\n"*7)
 
 
-''' Set up data logging'''
-data_is_logging = False
+
 
 
 '''...............................................................................................'''
@@ -185,8 +197,8 @@ while True:
           
     while run == 1:
         
-#         data_is_logging = datalog(data_is_logging,data_arr[0],data_arr[1],data_arr[2],data_arr[3],data_arr[4],data_arr[5],99)
         
+#         data_is_logging = datalog(data_is_logging,data_arr[0],data_arr[1],data_arr[2],data_arr[3],data_arr[4],data_arr[5],99)
         
         if datetime.now() >= set_time:
             can_switch = True
@@ -199,10 +211,6 @@ while True:
         tank_switch = auto_return[0]
         cooling = auto_return[1]
         
-        log_number += 1
-        
-        
-        
 
 
            # see if manual switch has been flipped
@@ -213,34 +221,41 @@ while True:
             run = 3
             
             
-        
-        
-        
-
-
-
-        if datetime.now() >= ndl: #chesks time now against when next data log time is
             
-            '''DATA LOGGING.........................................'''
-        
-        
-            with open(cur_filename+'.csv','+a',  newline='') as csvfile:
-                spamwriter = csv.writer(csvfile, delimiter=',',quotechar=' ', quoting=csv.QUOTE_MINIMAL)
-                
-                if data_is_logging == False:
-                    spamwriter.writerow(['Time'] + ['In_Temp']+ ['In_Hum']+['Out_Temp']+ ['Out_Hum']+ ['Other_Temp']+ ['Other_Hum']+ ['No_Tank_Switch'])
-                    data_is_logging = True
-                    
-                
-                time.sleep(0.1)
-               
-                spamwriter.writerow([str(datetime.now()),"%.1f" %(data_arr[0]),"%.1f" %(data_arr[1]),"%.1f" %(data_arr[2]),"%.1f" %(data_arr[3]),"%.1f" %(data_arr[4]),"%.1f" %(data_arr[5]),no_tank_changes])
-               
-                ndl = datetime.now()+ timedelta(minutes = dli) #sets time limit until next data log
+#DATA LOGGING.........................................'''
             
+
+
+        if data_is_logging == False:
+            
+            new_time = datetime.now()
+            cur_filename = "/home/pi/code/ldhr/ldhr/Logging/" + "%d-%d-%d  %d:%d" % (new_time.day, new_time.month,new_time.year ,new_time.hour, new_time.minute)
+    
+        
+        autolog_return = autolog(data_is_logging,ndl, cur_filename, dli, data_arr, no_tank_changes, cooling)
+        
+        ndl = autolog_return[0]
+        data_is_logging = autolog_return[1]
+        
+
+#END OF DATA LOGGING........................................  
+        
+#DATA SENDING.........................................'''
+
+        
+        autosend_return = autosend(session_length, session_start, following_session, data_is_logging,cur_filename)
+        
+        data_is_logging = autosend_return[0]
+        session_start = autosend_return[1]
+        following_session = autosend_return[2]
         
         
-        '''END OF DATA LOGGING.........................................'''
+       
+        print(session_start)
+        print(following_session)
+
+        
+      
         
         
         

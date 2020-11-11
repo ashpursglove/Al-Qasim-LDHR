@@ -24,6 +24,7 @@ msg.attach(MIMEText(body, 'plain'))
 
 
 filename='info.csv'
+
 attachment=open(filename,'rb')
 
 part = MIMEBase('application', 'octet-stream')
