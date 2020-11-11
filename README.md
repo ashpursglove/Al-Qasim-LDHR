@@ -4,9 +4,7 @@ https://github.com/ashpursglove/Al-Qasim-LDHR
 Still to do:
 
 Create setup program for new installs,  
-setup SMTP auto email,  
-CSV fix on | delims,    
-slow scroll on high def displays,     
+setup SMTP auto email,     
 
 
 

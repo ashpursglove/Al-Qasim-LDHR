@@ -9,9 +9,13 @@ from DAQ.outside import get_out_data
 from DAQ.other import get_other_data
 from Modes.auto import auto_mode
 from Modes.manual import manual_mode
-from Logging.data_logging import datalog
 
-cur_filename = str(datetime.now())
+
+cur_filename = "/home/pi/code/ldhr/ldhr/Logging/"+str(datetime.now())
+
+
+
+
 no_tank_changes = 0
 GPIO.cleanup() # cleanup all GPIOs and close channels!!!
 log_number = 0
@@ -19,7 +23,7 @@ prog = 0 # tank switch progress tracker
 
 dlt = datetime.now() #last datalogging time
 ndl = datetime.now() # next data logging time
-dli = 1 # datalogging interval time in minutes
+dli = 0.05 # datalogging interval time in minutes
 
 
 hum_diff = 5 #difference in hum that causes a tank switch
@@ -217,11 +221,11 @@ while True:
 
         if datetime.now() >= ndl: #chesks time now against when next data log time is
             
-            
+            '''DATA LOGGING.........................................'''
         
         
             with open(cur_filename+'.csv','+a',  newline='') as csvfile:
-                spamwriter = csv.writer(csvfile, delimiter='|',quotechar=' ', quoting=csv.QUOTE_MINIMAL)
+                spamwriter = csv.writer(csvfile, delimiter=',',quotechar=' ', quoting=csv.QUOTE_MINIMAL)
                 
                 if data_is_logging == False:
                     spamwriter.writerow(['Time'] + ['In_Temp']+ ['In_Hum']+['Out_Temp']+ ['Out_Hum']+ ['Other_Temp']+ ['Other_Hum']+ ['No_Tank_Switch'])
@@ -236,7 +240,7 @@ while True:
             
         
         
-        
+        '''END OF DATA LOGGING.........................................'''
         
         
         
