@@ -1,14 +1,9 @@
 https://github.com/ashpursglove/Al-Qasim-LDHR
 
-test
-
 
 Still to do:
 
 Create setup program for new installs,  
-setup SMTP auto email,  
-CSV fix on | delims,    
-slow scroll on high def displays,     
 
 
 
@@ -36,5 +31,8 @@ GPIO:
 20 - outlet float switch    
 21 - Staging float switch   
 
+SMTP settings
+rsfsmtp@gmail.com
+RSF2020!
 
 #############################################################################################
