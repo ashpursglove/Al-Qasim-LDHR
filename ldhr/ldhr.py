@@ -45,7 +45,7 @@ run = 1
 data_is_logging = False
 
 day_number = 0
-session_length = 30 #time between each data dump in minutes (1 day is 1440 minutes)
+session_length = 2 #time between each data dump in minutes (1 day is 1440 minutes)
 session_start = datetime.now()
 following_session = datetime.now()+ timedelta(minutes = session_length)
 

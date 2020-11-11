@@ -11,11 +11,12 @@ email_from = "rsfsmtp@gmail.com" # use the RSFSMTP email here
 pswd = "RSF2020!"
 
 email_to = "ashley.pursglove@redseafarms.com" # Email that message will be to be sent to
+#email_to = "alba.luna@redseafarms.com" # Email that message will be to be sent to
 #email_to = "catherine.decastro@kaust.edu.sa" # Email that message will be to be sent to
 
 
 subject = "Data from RSF Pi Al Qasim Site"
-body = "This message was auto generated (by Ash's awesome code!!), Please dont reply to this\n\n\n\n\n\n All code written by Ashley Purslgove\nCopyright 'Red Sea Farms' 2020"
+body = "This message was auto generated (by Ash's awesome code!!), Please don't reply to this.\n\n\n\n\n\nAll code written by Ashley Purslgove\nCopyright 'Red Sea Farms' 2020"
 
 
 
