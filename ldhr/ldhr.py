@@ -24,9 +24,8 @@ GPIO.cleanup() # cleanup all GPIOs and close channels!!!
 log_number = 0
 prog = 0 # tank switch progress tracker
 
-dlt = datetime.now() #last datalogging time
-ndl = datetime.now() # next data logging time
-dli = 0.05 # datalogging interval time in minutes
+
+
 
 
 hum_diff = 1 #difference in hum that causes a tank switch
@@ -43,9 +42,13 @@ run = 1
 
 ''' Set up data logging'''
 data_is_logging = False
+dlt = datetime.now() #last datalogging time
+ndl = datetime.now() # next data logging time
 
 day_number = 0
-session_length = 2 #time between each data dump in minutes (1 day is 1440 minutes)
+
+dli = 2 # datalogging interval time in minutes
+session_length = 540 #time between each data dump in minutes (1 day is 1440 minutes)
 session_start = datetime.now()
 following_session = datetime.now()+ timedelta(minutes = session_length)
 
