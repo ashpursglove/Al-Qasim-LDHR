@@ -7,7 +7,7 @@ Still to do:
 
 Create setup program for new installs,  
 
-
+ 
 
 PIN OUT
 
@@ -33,8 +33,8 @@ GPIO:
 20 - outlet float switch    
 21 - Staging float switch   
 
-SMTP settings
-rsfsmtp@gmail.com
-RSF2020!
+SMTP settings			
+rsfsmtp@gmail.com			
+RSF2020!			
 
 #############################################################################################
