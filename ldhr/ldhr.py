@@ -11,6 +11,21 @@ from Modes.auto import auto_mode
 from Modes.manual import manual_mode
 from Logging.auto_log_send import autolog
 from Logging.auto_log_send import autosend
+from Error.error_occ import email_error
+
+#email list 
+
+e1= "ashley.pursglove@redseafarms.com"
+e2= "ryan.lefers@redseafarms.com"
+e3= "oscar.tovar@redseafarms.com"
+e4= "ahmed.almashharawi@redseafarms.com"
+e5= "alba.luna@redseafarms.com"
+
+
+
+
+
+
 
 
 cur_filename = "nil"
@@ -188,174 +203,185 @@ def get_sensor_data():
 
 
 
+try:
+    #main program
 
-#main program
-
-while True:
-    if datetime.now() >= set_time:
-        can_switch = True
-          
-          
-          #AUTO MODE....................................................................
-          
-    while run == 1:
-        
-        
-#         data_is_logging = datalog(data_is_logging,data_arr[0],data_arr[1],data_arr[2],data_arr[3],data_arr[4],data_arr[5],99)
-        
+    while True:
+  
         if datetime.now() >= set_time:
             can_switch = True
-        
-        get_sensor_data()
-        
-        auto_return = auto_mode(data_arr[0],temp_setpoint,data_arr[1],data_arr[3],hum_diff) # runs the auto program here and returns paramaters
-        
-        
-        tank_switch = auto_return[0]
-        cooling = auto_return[1]
-        
-
-
-           # see if manual switch has been flipped
-        if GPIO.input(26):
-            run = 2
-        
-        if tank_switch and can_switch:
-            run = 3
+              
+              
+              #AUTO MODE....................................................................
+              
+        while run == 1:
             
             
+    #         data_is_logging = datalog(data_is_logging,data_arr[0],data_arr[1],data_arr[2],data_arr[3],data_arr[4],data_arr[5],99)
             
-#DATA LOGGING.........................................'''
+            if datetime.now() >= set_time:
+                can_switch = True
+            
+            get_sensor_data()
+            
+            auto_return = auto_mode(data_arr[0],temp_setpoint,data_arr[1],data_arr[3],hum_diff) # runs the auto program here and returns paramaters
+            
+            
+            tank_switch = auto_return[0]
+            cooling = auto_return[1]
             
 
 
-        if data_is_logging == False:
+               # see if manual switch has been flipped
+            if GPIO.input(26):
+                run = 2
             
-            new_time = datetime.now()
-            cur_filename = "/home/pi/code/ldhr/ldhr/Logging/" + "%d-%d-%d  %d:%d" % (new_time.day, new_time.month,new_time.year ,new_time.hour, new_time.minute)
-    
-        
-        autolog_return = autolog(data_is_logging,ndl, cur_filename, dli, data_arr, no_tank_changes, cooling)
-        
-        ndl = autolog_return[0]
-        data_is_logging = autolog_return[1]
-        
-
-#END OF DATA LOGGING........................................  
-        
-#DATA SENDING.........................................'''
-
-        
-        autosend_return = autosend(session_length, session_start, following_session, data_is_logging,cur_filename)
-        
-        data_is_logging = autosend_return[0]
-        session_start = autosend_return[1]
-        following_session = autosend_return[2]
-        
-        
-       
-        print(session_start)
-        print(following_session)
-
-        
-      
-        
-        
-        
-        
-        #...................................................................................
-        
-        
-            
-        
-        
-        
-        
-        
-        
-        
-        
-        #Manual mode................................................................
-        
-        
-    while run == 2:
-        manual_or = (GPIO.input(26))
-        
-        if manual_or == 0:
-            run = 1
-        
-        manual_mode()
-        
-        print("\n"*100)
-        print("*******************Manual Mode*******************")
-        print("\n"*5)
-        print("             Manual Mode Engaged")
-        print("\n")
-        print("         Use Switches to control Outputs")
-        print("\n"*5)
-        print("*******************Manual Mode*******************")
-        print("\n"*2)
-        time.sleep(0.1)
-        
-
-
-
-     #...........................................................................................
-
-
-# Tank Switch.............................................................................
-            
-
-    while run ==3:
-        time.sleep(0.2)
-        inlet_empty = (GPIO.input(16))
-        outlet_empty = (GPIO.input(20))
-        stage_empty = (GPIO.input(21))
-        time.sleep(0.2)
-        print("\n"*50)
-        print("*******************Tank Switch in Progress*******************")
-        print("")
-        print("Tank Switch")
-        print("")
-        print("Next Tank Switch allowed in %.1f Minutes" % (switch_delay))
-        print("")
-        print("program Step: %s" % (prog))
-        print("")
-        
-        #print("inlet empty: %r" % (inlet_empty))
-        if prog == 0:
-            GPIO.output(6, GPIO.LOW)
-            print("Moving Inlet Tank to Staging Tank")
-            if inlet_empty == 0:
-                prog = 1
-        
-        if prog ==1:
-            GPIO.output(6, GPIO.HIGH)
-            GPIO.output(13, GPIO.LOW)
-            print("Moving Outlet Tank to Inlet Tank")
-            if outlet_empty == 0:
-                prog = 2
+            if tank_switch and can_switch:
+                run = 3
                 
-        if prog == 2:
-            GPIO.output(13, GPIO.HIGH)
-            GPIO.output(19, GPIO.LOW)
-            print("Moving Staging Tank to Outlet Tank")
-            if stage_empty == 0:
-                GPIO.output(19, GPIO.HIGH)
-                print("Tank Switch Complete, Moving Back to Main Program")
                 
-                set_time = datetime.now()+ timedelta(minutes = switch_delay) #sets time limit until next switch
-                can_switch = False
-                prog = 0
+                
+    #DATA LOGGING.........................................'''
+                
+
+
+            if data_is_logging == False:
+                
+                new_time = datetime.now()
+                cur_filename = "/home/pi/code/ldhr/ldhr/Logging/" + "%d-%d-%d  %d:%d" % (new_time.day, new_time.month,new_time.year ,new_time.hour, new_time.minute)
+        
+            
+            autolog_return = autolog(data_is_logging,ndl, cur_filename, dli, data_arr, no_tank_changes, cooling)
+            
+            ndl = autolog_return[0]
+            data_is_logging = autolog_return[1]
+            
+
+    #END OF DATA LOGGING........................................  
+            
+    #DATA SENDING.........................................'''
+
+            
+            autosend_return = autosend(session_length, session_start, following_session, data_is_logging,cur_filename)
+            
+            data_is_logging = autosend_return[0]
+            session_start = autosend_return[1]
+            following_session = autosend_return[2]
+            
+            
+           
+            print(session_start)
+            print(following_session)
+
+            
+          
+            
+            
+            
+            
+            #...................................................................................
+            
+            
+                
+            
+            
+            
+            
+            
+            
+            
+            
+            #Manual mode................................................................
+            
+            
+        while run == 2:
+            manual_or = (GPIO.input(26))
+            
+            if manual_or == 0:
                 run = 1
-                no_tank_changes = no_tank_changes +1
-        print("\n"*2)
-        print("*******************Tank Switch in Progress*******************")
-        print("\n"*4)
-#................................................................
-        
-        
+            
+            manual_mode()
+            
+            print("\n"*100)
+            print("*******************Manual Mode*******************")
+            print("\n"*5)
+            print("             Manual Mode Engaged")
+            print("\n")
+            print("         Use Switches to control Outputs")
+            print("\n"*5)
+            print("*******************Manual Mode*******************")
+            print("\n"*2)
+            time.sleep(0.1)
+            
 
+
+
+         #...........................................................................................
+
+
+    # Tank Switch.............................................................................
+                
+
+        while run ==3:
+            time.sleep(0.2)
+            inlet_empty = (GPIO.input(16))
+            outlet_empty = (GPIO.input(20))
+            stage_empty = (GPIO.input(21))
+            time.sleep(0.2)
+            print("\n"*50)
+            print("*******************Tank Switch in Progress*******************")
+            print("")
+            print("Tank Switch")
+            print("")
+            print("Next Tank Switch allowed in %.1f Minutes" % (switch_delay))
+            print("")
+            print("program Step: %s" % (prog))
+            print("")
+            
+            #print("inlet empty: %r" % (inlet_empty))
+            if prog == 0:
+                GPIO.output(6, GPIO.LOW)
+                print("Moving Inlet Tank to Staging Tank")
+                if inlet_empty == 0:
+                    prog = 1
+            
+            if prog ==1:
+                GPIO.output(6, GPIO.HIGH)
+                GPIO.output(13, GPIO.LOW)
+                print("Moving Outlet Tank to Inlet Tank")
+                if outlet_empty == 0:
+                    prog = 2
+                    
+            if prog == 2:
+                GPIO.output(13, GPIO.HIGH)
+                GPIO.output(19, GPIO.LOW)
+                print("Moving Staging Tank to Outlet Tank")
+                if stage_empty == 0:
+                    GPIO.output(19, GPIO.HIGH)
+                    print("Tank Switch Complete, Moving Back to Main Program")
+                    
+                    set_time = datetime.now()+ timedelta(minutes = switch_delay) #sets time limit until next switch
+                    can_switch = False
+                    prog = 0
+                    run = 1
+                    no_tank_changes = no_tank_changes +1
+            print("\n"*2)
+            print("*******************Tank Switch in Progress*******************")
+            print("\n"*4)
+    #................................................................
+            
+            
+except Exception as error:
+    
+    print("there has been an error")
+    print("\n")
+    print(error)
+    
+    email_error(e1, str(error))
+    email_error(e2, str(error))
+    email_error(e3, str(error))
+    email_error(e4, str(error))
+    email_error(e5, str(error))
             
             
 
