@@ -5,7 +5,9 @@ https://github.com/ashpursglove/Al-Qasim-LDHR
 
 Still to do:
 
-Create setup program for new installs,  
+Create setup.py program for new installs,  
+
+maybe auto run - lots of safety concerns around this!! would be best to train staff to run script
 
  
 
