@@ -15,10 +15,10 @@ PIN OUT
 
 in GPIO nomenclature
 
-GPIO:
-4  - Inside greenhouse DHT22
-17 - Outside greenhouse DHT22
-27 - Other greenhouse DHT22
+GPIO:    
+4  - Inside greenhouse DHT22    
+17 - Outside greenhouse DHT22    
+27 - Other greenhouse DHT22    
 
 
 5  - Pump 1 inlet cooling, Pump 2 outlet cooling, fans    
